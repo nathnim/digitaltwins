@@ -1,0 +1,881 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Minh họa bản sao số đô thị mẫu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: full-height operations room — live city canvas on the left, tabbed control panel on the right; stacks to one column on phones */
+:root{
+  --bg:#e8edf1; --panel:#ffffff; --panel-2:#f2f5f8; --ink:#14202b; --muted:#566573; --line:#d2dae1;
+  --accent:#0b6c87; --accent-ink:#ffffff; --accent-soft:#d5ebf1;
+  --ok:#2b9358; --warn:#c97c0a; --crit:#c2263a;
+  --los-a:#2b9358; --los-b:#72ab33; --los-c:#c4a91f; --los-d:#e0861a; --los-e:#dc5220; --los-f:#b31c33;
+  --aqi-1:#3aa655; --aqi-2:#cdb514; --aqi-3:#ec861b; --aqi-4:#dc3329; --aqi-5:#8f3f97; --aqi-6:#7e0023;
+  --map-bg:#dde4e9; --road:#ffffff; --road-edge:#b6c1ca; --lu-res:#ebe4d9; --lu-com:#e5dcea; --lu-pub:#f1e1d5;
+  --lu-green:#cde2c1; --lu-water:#b4d4e6; --bld:#d2c8b9; --bld-com:#c8bdd6; --bld-pub:#e3c4b0; --tree:#98c386;
+  --map-label:#46535f; --halo:#eef2f5; --veh:#1b2a37; --lamp:#f4b223; --lamp-off:#9aa6b0; --flood:#2a7fd4;
+  --night:#0b1a33; --rain:#45698f;
+  --age-1:#c9e2b2; --age-2:#93c47a; --age-3:#ecbd55; --age-4:#dd7d3c; --age-5:#ad372a;
+  --f-display:"Saira Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1319; --panel:#141c24; --panel-2:#1a242e; --ink:#e1e8ee; --muted:#8a9aaa; --line:#25323e;
+  --accent:#4bb6d5; --accent-ink:#04212a; --accent-soft:#153946;
+  --ok:#3fbf73; --warn:#f0a43a; --crit:#f0566a;
+  --los-a:#3fbf73; --los-b:#93c94a; --los-c:#e0c43a; --los-d:#f29a35; --los-e:#f2683a; --los-f:#e83c57;
+  --aqi-1:#4cc069; --aqi-2:#e3cf38; --aqi-3:#f59a35; --aqi-4:#f0564c; --aqi-5:#b067c0; --aqi-6:#c03a5c;
+  --map-bg:#121a22; --road:#2b3743; --road-edge:#0a1016; --lu-res:#1c242d; --lu-com:#201e2b; --lu-pub:#29211f;
+  --lu-green:#19291d; --lu-water:#123049; --bld:#2c3540; --bld-com:#312b3c; --bld-pub:#3b2e28; --tree:#2e5132;
+  --map-label:#9fb0bf; --halo:#121a22; --veh:#e9eff4; --lamp:#ffd05e; --lamp-off:#4a5662; --flood:#3d9bf0;
+  --night:#000000; --rain:#7aa6d4; color-scheme:dark;
+  --age-1:#3b5a33; --age-2:#5c8a47; --age-3:#b38c36; --age-4:#c86b32; --age-5:#d8483a;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1319; --panel:#141c24; --panel-2:#1a242e; --ink:#e1e8ee; --muted:#8a9aaa; --line:#25323e;
+  --accent:#4bb6d5; --accent-ink:#04212a; --accent-soft:#153946;
+  --ok:#3fbf73; --warn:#f0a43a; --crit:#f0566a;
+  --los-a:#3fbf73; --los-b:#93c94a; --los-c:#e0c43a; --los-d:#f29a35; --los-e:#f2683a; --los-f:#e83c57;
+  --aqi-1:#4cc069; --aqi-2:#e3cf38; --aqi-3:#f59a35; --aqi-4:#f0564c; --aqi-5:#b067c0; --aqi-6:#c03a5c;
+  --map-bg:#121a22; --road:#2b3743; --road-edge:#0a1016; --lu-res:#1c242d; --lu-com:#201e2b; --lu-pub:#29211f;
+  --lu-green:#19291d; --lu-water:#123049; --bld:#2c3540; --bld-com:#312b3c; --bld-pub:#3b2e28; --tree:#2e5132;
+  --map-label:#9fb0bf; --halo:#121a22; --veh:#e9eff4; --lamp:#ffd05e; --lamp-off:#4a5662; --flood:#3d9bf0;
+  --night:#000000; --rain:#7aa6d4; color-scheme:dark;
+  --age-1:#3b5a33; --age-2:#5c8a47; --age-3:#b38c36; --age-4:#c86b32; --age-5:#d8483a;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45}
+*{box-sizing:border-box}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:12px;padding-inline:16px;padding-block:12px}
+.foot{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;font-size:12px;color:var(--muted);text-align:center;padding-top:2px;border-top:1px solid var(--line);padding-block:8px 0}
+.foot b{color:var(--ink);font-weight:600}
+.foot .sep{color:var(--line)}
+.foot .note{flex-basis:100%;margin:0 0 2px;font-style:italic}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:38px;height:38px;border-radius:9px;background:var(--accent);display:grid;place-items:center;flex:none}
+.logo svg{width:24px;height:24px}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:22px;line-height:1.05;margin:0;letter-spacing:.01em;text-wrap:balance}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.clock{display:flex;align-items:baseline;gap:10px;margin-left:auto}
+.clock .d{color:var(--muted);font-size:12px}
+.clock b{font-family:var(--f-mono);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:var(--panel-2);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.pill.hot{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+.ctrls{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);padding:6px 11px;border-radius:8px;font-size:13px;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn svg{width:14px;height:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:transparent;padding:6px 10px;font-size:12px;font-family:var(--f-mono);font-weight:600}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.ctrls label{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+select{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:5px 8px;font-size:13px}
+
+/* main */
+.main{display:grid;grid-template-columns:minmax(0,1fr) 384px;gap:12px;min-height:0}
+.mapwrap{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--map-bg);min-height:0}
+#map{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#map.dragging{cursor:grabbing}
+.overlay{position:absolute;display:flex;gap:6px;flex-wrap:wrap}
+.layers{top:10px;left:10px;right:110px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);padding:4px 9px;border-radius:99px;font-size:12px;font-weight:500;backdrop-filter:blur(6px)}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--lamp-off)}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--ink)}
+.chip[aria-pressed="true"] i{background:var(--accent)}
+.chip[aria-pressed="false"]{color:var(--muted)}
+.zoom{top:10px;right:10px;flex-direction:column}
+.zoom button{width:32px;height:32px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:16px;font-weight:600;display:grid;place-items:center}
+.zoom svg{width:15px;height:15px}
+.modebar{bottom:10px;right:10px;align-items:center}
+.modebar .seg button{font-family:var(--f-body);font-weight:500}
+.legend{bottom:10px;left:10px;flex-direction:column;gap:6px;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:11px;backdrop-filter:blur(6px);max-width:calc(100% - 20px)}
+.legend .row{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.legend .t{color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-right:4px;min-width:64px}
+.legend .sw{display:inline-flex;align-items:center;gap:3px;margin-right:6px}
+.legend .sw b{width:14px;height:6px;border-radius:2px;display:inline-block}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:12px;box-shadow:0 6px 18px rgba(0,0,0,.14);max-width:260px;z-index:3}
+.tip b{display:block;font-weight:600}
+.tip span{color:var(--muted);font-family:var(--f-mono);font-size:11px}
+.banner{top:52px;left:10px;font-size:12px;background:var(--accent);color:var(--accent-ink);padding:5px 10px;border-radius:8px}
+
+/* panel */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;min-height:0;min-width:0}
+.tabs{display:flex;border-bottom:1px solid var(--line);padding:0 6px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:12px 10px 10px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;display:inline-flex;gap:6px;align-items:center}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.badge{font-family:var(--f-mono);font-size:10px;font-weight:600;background:var(--crit);color:#fff;border-radius:99px;padding:1px 6px}
+.badge[data-n="0"]{display:none}
+.pane{padding:14px;overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:16px}
+.pane[hidden]{display:none!important}
+h2{font-family:var(--f-display);font-size:15px;font-weight:600;letter-spacing:.02em;margin:0;text-transform:uppercase;color:var(--muted)}
+h3{margin:0;font-size:17px;font-weight:600;text-wrap:balance}
+.sec{display:flex;flex-direction:column;gap:10px}
+.hint{color:var(--muted);font-size:12px;margin:0}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi{background:var(--panel-2);border-radius:8px;padding:10px 11px;display:flex;flex-direction:column;gap:2px;border-left:3px solid var(--line);min-width:0}
+.kpi[data-s="ok"]{border-left-color:var(--ok)}
+.kpi[data-s="warn"]{border-left-color:var(--warn)}
+.kpi[data-s="crit"]{border-left-color:var(--crit)}
+.kpi .l{font-size:11px;color:var(--muted);font-weight:500}
+.kpi .v{font-family:var(--f-display);font-size:26px;font-weight:600;line-height:1.05;font-variant-numeric:tabular-nums}
+.kpi .v small{font-family:var(--f-body);font-size:11px;font-weight:500;color:var(--muted);margin-left:3px}
+.kpi .n{font-size:11px;color:var(--muted)}
+.chart{width:100%;height:150px;display:block}
+.spark{width:100%;height:90px;display:block;background:var(--panel-2);border-radius:8px}
+
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.log li{display:grid;grid-template-columns:44px 8px 1fr;gap:8px;align-items:start;padding:7px 4px;border-bottom:1px solid var(--line);font-size:12.5px;cursor:pointer;border-radius:4px}
+.log li:hover{background:var(--panel-2)}
+.log time{font-family:var(--f-mono);font-size:11px;color:var(--muted);padding-top:1px}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:5px;background:var(--muted)}
+.dot.warn{background:var(--warn)} .dot.crit{background:var(--crit)} .dot.ok{background:var(--ok)}
+
+.field{display:flex;flex-direction:column;gap:6px}
+.field .top2{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.field label{font-weight:500;font-size:13px}
+.field output{font-family:var(--f-mono);font-size:13px;font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{border:1px solid var(--line);background:var(--panel-2);border-radius:99px;padding:3px 10px;font-size:12px}
+.presets button:hover{border-color:var(--accent)}
+.fp{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:8px 10px;background:var(--panel-2);border-radius:8px}
+.fp b{font-size:13px;font-weight:600}
+.fp .m{font-family:var(--f-mono);font-size:12px;text-align:right}
+.fp .opts{grid-column:1/-1;display:flex;gap:14px;font-size:12px;color:var(--muted)}
+.fp .opts label{display:inline-flex;gap:5px;align-items:center;cursor:pointer}
+.empty{border:1px dashed var(--line);border-radius:8px;padding:18px;color:var(--muted);font-size:13px;text-align:center}
+
+.dl{display:grid;grid-template-columns:auto 1fr;gap:0;margin:0}
+.dl dt,.dl dd{padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.dl dt{color:var(--muted);padding-right:12px}
+.dl dd{margin:0;text-align:right;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);letter-spacing:.03em}
+.st{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;font-family:var(--f-body)}
+.st.ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.st.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.st.crit{background:color-mix(in srgb,var(--crit) 16%,transparent);color:var(--crit)}
+.st.idle{background:var(--panel-2);color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+
+.tk{display:flex;flex-direction:column;gap:6px;padding:10px 11px;border:1px solid var(--line);border-radius:8px}
+.tk .h{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.tk .id{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.tk .t{font-size:13px;font-weight:500}
+.tk .meta{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.tk .btn{padding:4px 9px;font-size:12px}
+.tk.done{opacity:.62}
+.tgl{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;cursor:pointer}
+.tgl input{accent-color:var(--accent);width:16px;height:16px}
+.presets button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.blist{display:flex;flex-direction:column}
+.blist button{display:grid;grid-template-columns:72px minmax(0,1fr) 44px 64px;gap:8px;align-items:center;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:7px 4px;font-size:12.5px;border-radius:4px}
+.blist button:hover{background:var(--panel-2)}
+.blist .c{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.blist .n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.blist .y{font-family:var(--f-mono);font-size:11.5px;text-align:right;color:var(--muted)}
+.ageb{display:inline-flex;align-items:center;gap:5px;justify-self:end;font-family:var(--f-mono);font-size:11.5px;font-weight:600}
+.ageb i{width:10px;height:10px;border-radius:2px}
+.more{font-size:12px;color:var(--muted);padding:8px 4px}
+
+@media (max-width:920px){
+  html,body{height:auto}
+  .app{height:auto}
+  .main{grid-template-columns:minmax(0,1fr)}
+  .mapwrap{height:64vh;min-height:380px}
+  .panel{max-height:none}
+  .pane{overflow:visible}
+  .clock{margin-left:0}
+  .layers{right:52px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-ink)"><path d="M3 20h18M5 20V9l4-3v14M9 20V4h6v16M15 20v-9h4v9"/><path d="M11 7h2M11 10h2M11 13h2"/></svg></div>
+      <div><h1>Minh họa bản sao số đô thị mẫu</h1><p>Trung tâm điều hành đô thị thông minh · dữ liệu mô phỏng minh họa</p></div>
+    </div>
+    <div class="clock"><span class="d" id="clkDate">Thứ Sáu, 09/10/2026</span><b id="clk">07:30</b><span class="pill" id="clkMode">Cao điểm sáng</span></div>
+    <div class="ctrls">
+      <button class="btn primary" id="btnPlay" aria-label="Tạm dừng mô phỏng"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg><span>Tạm dừng</span></button>
+      <div class="seg" id="speedSeg" role="group" aria-label="Tốc độ mô phỏng">
+        <button data-sp="1" aria-pressed="false">1×</button><button data-sp="10" aria-pressed="true">10×</button><button data-sp="60" aria-pressed="false">60×</button><button data-sp="300" aria-pressed="false">300×</button>
+      </div>
+      <label for="jump">Đến giờ <select id="jump"></select></label>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="mapwrap" id="mapwrap">
+      <canvas id="map" aria-label="Bản đồ bản sao số khu đô thị"></canvas>
+      <div class="overlay layers" id="layers"></div>
+      <div class="overlay zoom">
+        <button id="zIn" aria-label="Phóng to">+</button>
+        <button id="zOut" aria-label="Thu nhỏ">−</button>
+        <button id="zFit" aria-label="Vừa khung"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
+      </div>
+      <div class="overlay banner" id="banner" hidden>Chế độ Đóng/mở tuyến: bấm vào một đoạn đường</div>
+      <div class="overlay modebar">
+        <div class="seg" id="modeSeg" role="group" aria-label="Chế độ thao tác">
+          <button data-mode="view" aria-pressed="true">Xem chi tiết</button><button data-mode="close" aria-pressed="false">Đóng/mở tuyến</button>
+        </div>
+      </div>
+      <div class="overlay legend" id="legend"></div>
+      <div class="tip" id="tip" hidden></div>
+    </section>
+
+    <aside class="panel">
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="overview" aria-selected="true">Tổng quan</button>
+        <button role="tab" data-tab="scenario" aria-selected="false">Kịch bản</button>
+        <button role="tab" data-tab="bld" aria-selected="false">Công trình</button>
+        <button role="tab" data-tab="object" aria-selected="false">Đối tượng</button>
+        <button role="tab" data-tab="tickets" aria-selected="false">Phiếu việc <span class="badge" id="tkBadge" data-n="0">0</span></button>
+      </nav>
+
+      <div class="pane" id="tab-overview">
+        <div class="sec">
+          <h2>Chỉ số vận hành</h2>
+          <div class="kpis" id="kpis"></div>
+        </div>
+        <div class="sec">
+          <h2>Tốc độ mạng lưới trong ngày</h2>
+          <canvas class="chart" id="dayChart"></canvas>
+          <p class="hint">Tốc độ hành trình trung bình (km/h), trọng số theo lưu lượng × chiều dài. Đường mờ: hôm qua.</p>
+        </div>
+        <div class="sec">
+          <h2>Nhật ký sự kiện</h2>
+          <ul class="log" id="log"></ul>
+        </div>
+      </div>
+
+      <div class="pane" id="tab-scenario" hidden>
+        <div class="sec">
+          <h2>Mưa và thoát nước</h2>
+          <div class="field">
+            <div class="top2"><label for="rain">Cường độ mưa</label><output id="rainOut">0 mm/h</output></div>
+            <input type="range" id="rain" min="0" max="120" step="5" value="0">
+            <div class="presets" data-preset="rain"><button data-v="0">Tạnh</button><button data-v="25">Mưa vừa 25</button><button data-v="60">Mưa to 60</button><button data-v="100">Mưa cực đoan 100</button></div>
+          </div>
+          <div id="fpList" class="sec"></div>
+        </div>
+        <div class="sec">
+          <h2>Nhu cầu đi lại</h2>
+          <div class="field">
+            <div class="top2"><label for="demand">Hệ số nhu cầu so với ngày thường</label><output id="demOut">100%</output></div>
+            <input type="range" id="demand" min="60" max="140" step="5" value="100">
+            <div class="presets" data-preset="demand"><button data-v="70">Ngày nghỉ lễ 70%</button><button data-v="100">Ngày thường</button><button data-v="130">Sự kiện lớn 130%</button></div>
+          </div>
+        </div>
+        <div class="sec">
+          <h2>Tổ chức giao thông</h2>
+          <p class="hint">Chọn chế độ <b>Đóng/mở tuyến</b> ở góc bản đồ rồi bấm vào đoạn đường. Lưu lượng của đoạn bị đóng được phân sang các tuyến song song.</p>
+          <div id="closedList" class="sec"></div>
+        </div>
+        <div class="actions"><button class="btn" id="btnReset">Khôi phục kịch bản mặc định</button></div>
+      </div>
+
+      <div class="pane" id="tab-bld" hidden>
+        <div class="sec">
+          <h2>Sàng lọc công trình theo tuổi</h2>
+          <p class="hint">Tuổi công trình tính đến năm 2026 theo năm hoàn thành xây dựng. Công trình không thỏa điều kiện lọc được làm mờ trên bản đồ.</p>
+          <label class="tgl"><input type="checkbox" id="ageColor" checked> Tô màu công trình theo nhóm tuổi</label>
+          <div class="presets" id="agePre"></div>
+          <div class="field">
+            <div class="top2"><label for="ageMin">Tuổi tối thiểu</label><output id="ageMinOut">0 năm</output></div>
+            <input type="range" id="ageMin" min="0" max="70" step="1" value="0">
+          </div>
+          <div class="field">
+            <div class="top2"><label for="ageMax">Tuổi tối đa</label><output id="ageMaxOut">70 năm</output></div>
+            <input type="range" id="ageMax" min="0" max="70" step="1" value="70">
+          </div>
+          <div class="field">
+            <label for="bUse">Công năng</label>
+            <select id="bUse"><option value="all">Tất cả công năng</option><option value="res">Nhà ở</option><option value="com">Thương mại – dịch vụ</option><option value="pub">Công trình công cộng</option></select>
+          </div>
+        </div>
+        <div class="sec">
+          <h2>Kết quả sàng lọc</h2>
+          <div class="kpis" id="bStats"></div>
+          <canvas class="chart" id="ageHist" style="height:140px"></canvas>
+          <p class="hint">Số công trình theo nhóm tuổi 5 năm. Cột đậm nằm trong khoảng tuổi đang lọc.</p>
+        </div>
+        <div class="sec">
+          <h2>Danh sách công trình phù hợp</h2>
+          <p class="hint">Sắp xếp từ cũ nhất. Bấm một dòng để xem hồ sơ công trình và định vị trên bản đồ.</p>
+          <div class="blist" id="bList"></div>
+        </div>
+      </div>
+
+      <div class="pane" id="tab-object" hidden><div id="objBox"></div></div>
+
+      <div class="pane" id="tab-tickets" hidden>
+        <div class="sec">
+          <div class="seg" id="tkFilter" role="group" aria-label="Lọc phiếu việc" style="align-self:flex-start">
+            <button data-f="open" aria-pressed="true" style="font-family:var(--f-body)">Đang mở</button><button data-f="done" aria-pressed="false" style="font-family:var(--f-body)">Hoàn thành</button><button data-f="all" aria-pressed="false" style="font-family:var(--f-body)">Tất cả</button>
+          </div>
+          <div id="tkList" class="sec"></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+  <footer class="foot">
+    <p class="note">Ghi chú: Mạng lưới mang tính chất minh họa, làm tài liệu học tập cho sinh viên.</p>
+    <span><b>TS. Đặng Minh Tân</b> – Bộ môn Đường bộ – Sân bay</span><span class="sep" aria-hidden="true">|</span>
+    <span>Khoa Công trình và Môi trường</span><span class="sep" aria-hidden="true">|</span>
+    <span>Trường Đại học Giao thông vận tải</span>
+  </footer>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const fmt=(n,d=0)=>Number(n).toLocaleString('vi-VN',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pad=n=>String(n).padStart(2,'0');
+const hhmm=m=>pad(Math.floor(m/60)%24)+':'+pad(Math.floor(m%60));
+let seed=20261009; const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
+
+/* ---------------- Mô hình đô thị ---------------- */
+const W=1220,H=840, M_PER_U=2.5;
+const XS=[60,270,500,740,960,1160], YS=[60,240,430,610,780];
+const COLN=["Phố Hoàng Diệu","Đường Lê Lợi","Đường Nguyễn Trãi","Phố Lý Thường Kiệt","Đường Trần Phú","Phố Kim Mã"];
+const ROWN=["Phố Văn Cao","Đường Láng","Đại lộ Thăng Long","Phố Chùa Bộc","Đường Vành đai 2"];
+const CLS={art:{cap:3600,v0:60,w:16,label:'Trục chính đô thị'},col:{cap:1800,v0:45,w:12,label:'Đường liên khu vực'},loc:{cap:1100,v0:35,w:9,label:'Đường khu vực'}};
+const short=s=>s.replace(/^(Phố|Đường|Đại lộ) /,'');
+
+const nodes=[];
+for(let r=0;r<5;r++)for(let c=0;c<6;c++)nodes.push({kind:'node',id:r*6+c,r,c,x:XS[c],y:YS[r],signal:(r===2||r===4||c===2),offset:Math.floor(rnd()*90)});
+const links=[];
+function addLink(a,b,orient,line,pos){
+  const cls=orient==='h'?(line===2||line===4?'art':line===0?'loc':'col'):(line===2?'art':(line===0||line===5)?'loc':'col');
+  const A=nodes[a],B=nodes[b], lenU=Math.hypot(B.x-A.x,B.y-A.y);
+  links.push({kind:'link',id:links.length,a,b,orient,line,pos,cls,name:orient==='h'?ROWN[line]:COLN[line],
+    seg:orient==='h'?`${short(COLN[pos])} – ${short(COLN[pos+1])}`:`${short(ROWN[pos])} – ${short(ROWN[pos+1])}`,
+    cap:CLS[cls].cap,v0:CLS[cls].v0,w:CLS[cls].w,lenU,len:lenU*M_PER_U/1000,rand:.62+rnd()*.38,
+    dem:0,extra:0,flow:0,vc:0,speed:CLS[cls].v0,capEff:CLS[cls].cap,closed:false,floodClosed:false,floodDepth:0,
+    hist:[],congN:0,congFlag:false,veh:[]});
+}
+for(let r=0;r<5;r++)for(let c=0;c<5;c++)addLink(r*6+c,r*6+c+1,'h',r,c);
+for(let c=0;c<6;c++)for(let r=0;r<4;r++)addLink(r*6+c,(r+1)*6+c,'v',c,r);
+links.forEach(l=>l.par=links.filter(o=>o.orient===l.orient&&o.pos===l.pos&&Math.abs(o.line-l.line)===1));
+
+const LU=[
+ [['res','Khu dân cư Văn Cao'],['com','Tổ hợp thương mại Lê Lợi'],['pub','Trường THCS Đô thị Mẫu'],['res','Khu tập thể Láng Thượng'],['green','Công viên Hòa Bình']],
+ [['res','Khu dân cư Láng Hạ'],['water','Hồ điều hòa Bảy Mẫu'],['com','Phố đi bộ Nguyễn Trãi'],['res','Khu đô thị Kim Liên'],['res','Khu dân cư Trần Phú']],
+ [['pub','Bệnh viện Đa khoa Khu vực'],['res','Khu dân cư Thăng Long'],['com','Chợ Trung tâm'],['res','Khu nhà ở xã hội Chùa Bộc'],['com','Văn phòng Kim Mã']],
+ [['res','Khu dân cư Hoàng Diệu'],['green','Vườn hoa Lý Tự Trọng'],['res','Khu tái định cư Vành đai'],['pub','Trung tâm Hành chính Đô thị'],['res','Khu dân cư Ngọc Khánh']]];
+const LUL={res:'Đất ở',com:'Thương mại – dịch vụ',pub:'Công trình công cộng',green:'Cây xanh – công viên',water:'Mặt nước – hồ điều hòa'};
+const blocks=[];
+for(let r=0;r<4;r++)for(let c=0;c<5;c++){
+  const [use,name]=LU[r][c];
+  const b={kind:'block',id:blocks.length,r,c,use,name,x0:XS[c]+16,y0:YS[r]+16,x1:XS[c+1]-16,y1:YS[r+1]-16,bld:[],trees:[]};
+  b.area=(b.x1-b.x0)*(b.y1-b.y0)*M_PER_U*M_PER_U/1e4;
+  if(use==='green'||use==='water'){const n=use==='green'?46:20;for(let i=0;i<n;i++){const x=b.x0+8+rnd()*(b.x1-b.x0-16),y=b.y0+8+rnd()*(b.y1-b.y0-16);if(use==='water'){const cx=(b.x0+b.x1)/2,cy=(b.y0+b.y1)/2;if(Math.abs(x-cx)<(b.x1-b.x0)/2-26&&Math.abs(y-cy)<(b.y1-b.y0)/2-24)continue}b.trees.push({x,y,r:4+rnd()*5})}}
+  else if(use==='pub'){const w=(b.x1-b.x0)*.52,h=(b.y1-b.y0)*.42;b.bld.push({x:b.x0+20,y:b.y0+18,w,h});b.bld.push({x:b.x0+20,y:b.y0+28+h,w:w*.6,h:(b.y1-b.y0)*.28});for(let i=0;i<14;i++)b.trees.push({x:b.x1-30-rnd()*40,y:b.y0+14+rnd()*(b.y1-b.y0-28),r:4+rnd()*4})}
+  else{const cw=use==='com'?56:40;let y=b.y0+6;while(y<b.y1-22){const hh=cw*(.75+rnd()*.5);let x=b.x0+6;while(x<b.x1-22){const ww=cw*(.7+rnd()*.6);if(rnd()>.12)b.bld.push({x,y,w:Math.min(ww,b.x1-6-x),h:Math.min(hh,b.y1-6-y)});x+=ww+7}y+=hh+7}}
+  b.floors=use==='com'?Math.round(9+rnd()*14):use==='pub'?Math.round(4+rnd()*5):use==='res'?Math.round(5+rnd()*12):0;
+  b.pop=use==='res'?Math.round(b.area*(380+rnd()*260)):use==='com'?Math.round(b.area*60):0;
+  blocks.push(b);
+}
+/* hồ sơ công trình: năm xây dựng, tầng cao, kết cấu */
+const NOW_YEAR=2026;
+const ERA={'Khu tập thể Láng Thượng':[1962,1984],'Khu dân cư Hoàng Diệu':[1960,2010],'Khu nhà ở xã hội Chùa Bộc':[2014,2022],'Khu tái định cư Vành đai':[2005,2016],'Khu đô thị Kim Liên':[1997,2021],'Phố đi bộ Nguyễn Trãi':[1958,2008],'Chợ Trung tâm':[1972,2015]};
+const bldAll=[];
+blocks.forEach(b=>{const era=ERA[b.name]||(b.use==='com'?[1994,2025]:b.use==='pub'?[1966,2012]:[1962,2024]);
+  b.bld.forEach(o=>{const u=rnd();const year=Math.round(era[0]+(era[1]-era[0])*(b.use==='res'&&!ERA[b.name]?Math.pow(u,.8):u));
+    let fl=Math.max(1,Math.round((b.floors||4)*(.55+rnd()*.8)));
+    if(year<1990)fl=Math.min(fl,b.name.includes('tập thể')?5:4);
+    Object.assign(o,{kind:'bld',id:bldAll.length,block:b.id,use:b.use,code:'CT-'+String(bldAll.length+1).padStart(4,'0'),year,age:NOW_YEAR-year,floors:fl,
+      struct:year<1990?(b.name.includes('tập thể')?'Panel lắp ghép tấm lớn':'Tường gạch chịu lực, sàn BTCT'):(fl>=9?'Khung – vách lõi BTCT':'Khung BTCT toàn khối'),
+      areaM2:o.w*o.h*M_PER_U*M_PER_U});
+    bldAll.push(o)})});
+const AGE_MAX=Math.ceil(Math.max(...bldAll.map(o=>o.age))/5)*5;
+const AGE_B=[[0,9,'Dưới 10 năm'],[10,19,'10–19 năm'],[20,29,'20–29 năm'],[30,49,'30–49 năm'],[50,999,'Từ 50 năm']];
+const ageBand=a=>AGE_B.findIndex(b=>a>=b[0]&&a<=b[1]);
+const BF={min:0,max:AGE_MAX,use:'all'};
+const bfActive=()=>BF.min>0||BF.max<AGE_MAX||BF.use!=='all';
+const bMatch=o=>o.age>=BF.min&&o.age<=BF.max&&(BF.use==='all'||o.use===BF.use);
+const ageAdvice=a=>a>=50?['crit','Ưu tiên kiểm định, xem xét cải tạo hoặc xây dựng lại']:a>=40?['crit','Cần kiểm định chất lượng công trình']:a>=30?['warn','Kiểm tra kết cấu định kỳ, bảo trì lớn']:['ok','Bảo trì thường xuyên'];
+
+const floods=[[1,1,'ĐN-01','Ngã tư Láng × Lê Lợi',45,2.6],[2,3,'ĐN-02','Ngã tư Thăng Long × Lý Thường Kiệt',38,2.9],[3,4,'ĐN-03','Ngã tư Chùa Bộc × Trần Phú',55,2.4],[4,1,'ĐN-04','Ngã tư Vành đai 2 × Lê Lợi',40,2.8],[3,2,'ĐN-05','Ngã tư Chùa Bộc × Nguyễn Trãi',50,2.5]]
+ .map(([r,c,code,name,drain,gain],i)=>({kind:'flood',id:i,node:r*6+c,x:XS[c],y:YS[r],code,name,drain,gain,depth:0,pump:false,clog:false,hist:[],lvl:0}));
+const nodeFlood={}; floods.forEach(f=>nodeFlood[f.node]=f);
+const depthAt=n=>nodeFlood[n]?nodeFlood[n].depth:0;
+
+const sensors=[[1,0,'Lê Lợi'],[3,1,'Kim Liên'],[2,2,'Chợ Trung tâm'],[0,3,'Hoàng Diệu'],[4,2,'Kim Mã'],[4,0,'Công viên Hòa Bình']]
+ .map(([c,r,name],i)=>({kind:'sensor',id:i,code:'QT-'+pad(i+1),name:'Trạm quan trắc '+name,x:XS[c]+36,y:YS[r]+36,pm:20,aqi:40,hist:[],cat:0}));
+sensors.forEach(s=>s.w=links.map(l=>{const A=nodes[l.a],B=nodes[l.b];return Math.exp(-Math.hypot((A.x+B.x)/2-s.x,(A.y+B.y)/2-s.y)/200)}));
+
+const lamps=[];
+links.forEach(l=>{const A=nodes[l.a],B=nodes[l.b],n=Math.floor(l.lenU/64);const ux=(B.x-A.x)/l.lenU,uy=(B.y-A.y)/l.lenU,off=l.w/2+5;
+  for(let k=1;k<n;k++){const t=k/n,side=k%2?1:-1;lamps.push({kind:'lamp',id:lamps.length,code:'CS-'+String(lamps.length+1).padStart(3,'0'),link:l.id,x:A.x+(B.x-A.x)*t-uy*off*side,y:A.y+(B.y-A.y)*t+ux*off*side,fault:false})}});
+
+/* ---------------- Trạng thái ---------------- */
+const BASE_DATE=new Date(2026,9,9);
+const S={min:0,day:0,tot:0,simSec:0,acc:0,playing:true,speed:10,rain:0,demand:1,mode:'view',sel:null,energy:0,ageColor:true,
+  layers:{traffic:true,veh:true,flood:true,air:true,light:true,signal:true,bld:true}};
+const speedDay=new Array(1440).fill(null); let speedYest=null;
+const events=[]; let evVer=0; const tickets=[]; let tkVer=0, tkSeq=0, tkFilter='open';
+const K={avgSpeed:0,cong:0,aqiAvg:0,aqiMax:0,floodMax:0,lampsOn:0,lampsFault:0};
+
+const PROFILE=[.14,.09,.07,.07,.11,.28,.62,.95,.88,.62,.55,.6,.64,.56,.55,.6,.76,.98,.92,.7,.55,.44,.31,.21];
+const profile=h=>{const i=Math.floor(h)%24,j=(i+1)%24,f=h-Math.floor(h);return PROFILE[i]*(1-f)+PROFILE[j]*f};
+const AQ_BP=[0,25,50,80,150,250,350,500], AQ_I=[0,50,100,150,200,300,400,500];
+const AQ_CAT=['Tốt','Trung bình','Kém','Xấu','Rất xấu','Nguy hại'];
+const AQ_ADV=['Chất lượng không khí tốt, không ảnh hưởng tới sức khỏe.','Nhóm nhạy cảm nên hạn chế hoạt động ngoài trời kéo dài.','Nhóm nhạy cảm hạn chế ra ngoài; người dân nên giảm hoạt động mạnh ngoài trời.','Mọi người hạn chế hoạt động ngoài trời; nhóm nhạy cảm tránh ra ngoài.','Mọi người nên ở trong nhà, đóng cửa sổ, dùng máy lọc không khí.','Cảnh báo khẩn cấp về sức khỏe cho toàn bộ dân cư.'];
+function pm2aqi(pm){for(let i=1;i<AQ_BP.length;i++)if(pm<=AQ_BP[i])return AQ_I[i-1]+(pm-AQ_BP[i-1])*(AQ_I[i]-AQ_I[i-1])/(AQ_BP[i]-AQ_BP[i-1]);return 500}
+const aqiCat=a=>a<=50?0:a<=100?1:a<=150?2:a<=200?3:a<=300?4:5;
+const losOf=vc=>vc<.6?'A':vc<.7?'B':vc<.8?'C':vc<.9?'D':vc<1?'E':'F';
+const lampsOnAt=h=>h>=18||h<5.75;
+const floodLevel=d=>d<5?0:d<15?1:d<30?2:3;
+const FLV=['Khô ráo','Đọng nước','Ngập – hạn chế xe máy','Ngập sâu – cấm phương tiện'];
+
+function log(sev,text,ref){events.unshift({t:S.min,day:S.day,sev,text,ref});if(events.length>120)events.pop();evVer++}
+function ticket(title,unit,kind,ref){tickets.unshift({id:'PV-'+String(++tkSeq).padStart(4,'0'),t:S.min,day:S.day,title,unit,kind,ref,status:0});tkVer++}
+
+/* ---------------- Bước mô phỏng 1 phút ---------------- */
+function minuteStep(){
+  const h=S.min/60;
+  // thoát nước
+  floods.forEach(f=>{
+    const drain=f.drain*(f.clog?.5:1)+(f.pump?80:0);
+    f.depth=Math.max(0,f.depth+(S.rain*f.gain-drain)/600);
+    pushH(f.hist,f.depth);
+    const lv=floodLevel(f.depth);
+    if(lv>f.lvl){
+      if(lv===2){log('warn',`${f.code} ${f.name}: ngập ${fmt(f.depth)} cm, hạn chế xe máy`,{t:'flood',id:f.id});ticket(`Xử lý ngập tại ${f.code} – ${f.name}`,'Đội thoát nước','flood',{t:'flood',id:f.id})}
+      if(lv===3)log('crit',`${f.code}: ngập sâu ${fmt(f.depth)} cm, tạm cấm phương tiện qua nút`,{t:'flood',id:f.id});
+    } else if(lv===0&&f.lvl>=2)log('ok',`${f.code}: nước đã rút, thông xe trở lại`,{t:'flood',id:f.id});
+    f.lvl=lv;
+  });
+  // năng lực thông hành & nhu cầu
+  links.forEach(l=>{
+    let cap=l.cap; const fd=Math.max(depthAt(l.a),depthAt(l.b)); l.floodDepth=fd; l.floodClosed=fd>30;
+    if(fd>15)cap*=.45;else if(fd>5)cap*=.8;
+    if(S.rain>0)cap*=1-Math.min(.15,S.rain/400);
+    l.capEff=cap; l.extra=0;
+    l.dem=l.cap*profile(h)*l.rand*S.demand*(1+.07*Math.sin(S.tot/23+l.id*1.7));
+  });
+  links.forEach(l=>{if(l.closed||l.floodClosed){const open=l.par.filter(p=>!p.closed&&!p.floodClosed);open.forEach(p=>p.extra+=l.dem*.9/open.length)}});
+  let sFL=0,sT=0,cong=0;
+  links.forEach(l=>{
+    if(l.closed||l.floodClosed){l.flow=0;l.vc=0;l.speed=0}
+    else{l.flow=l.dem+l.extra;l.vc=l.flow/l.capEff;const x=Math.min(l.vc,1.6);l.speed=l.v0*(S.rain>20?.88:1)/(1+.8*x**4);
+      sFL+=l.flow*l.len;sT+=l.flow*l.len/l.speed;if(l.vc>=.9)cong++}
+    pushH(l.hist,l.vc);
+    if(l.vc>=1)l.congN++;else l.congN=0;
+    if(l.congN>=3&&!l.congFlag){l.congFlag=true;log('warn',`Ùn tắc trên ${l.name} (${l.seg}), V/C = ${fmt(l.vc,2)}`,{t:'link',id:l.id})}
+    else if(l.congFlag&&l.vc<.85){l.congFlag=false;log('ok',`Đã thông thoáng: ${l.name} (${l.seg})`,{t:'link',id:l.id})}
+    // phương tiện hiển thị
+    const tgt=(l.closed||l.floodClosed)?0:Math.min(16,Math.round(l.flow/115));
+    while(l.veh.length<tgt)l.veh.push({t:rnd(),d:rnd()<.5?1:-1});
+    if(l.veh.length>tgt)l.veh.length=tgt;
+  });
+  K.avgSpeed=sT>0?sFL/sT:0; K.cong=cong; speedDay[S.min]=K.avgSpeed;
+  // không khí
+  const night=(h>=22||h<6)?9:0, wash=1/(1+S.rain/40);
+  let sa=0,ma=0;
+  sensors.forEach(s=>{
+    let tr=0; links.forEach((l,i)=>tr+=l.flow*s.w[i]);
+    const target=(14+night+tr*.0072)*wash;
+    s.pm=s.pm*.85+target*.15; s.aqi=pm2aqi(s.pm); pushH(s.hist,s.pm);
+    const cat=aqiCat(s.aqi);
+    if(cat>s.cat&&cat>=2)log(cat>=3?'crit':'warn',`${s.code} ${s.name}: VN_AQI ${fmt(s.aqi)} – mức ${AQ_CAT[cat]}`,{t:'sensor',id:s.id});
+    if(cat>s.cat&&cat>=3)ticket(`Cảnh báo chất lượng không khí tại ${s.name}`,'Phòng Tài nguyên – Môi trường','air',{t:'sensor',id:s.id});
+    s.cat=cat; sa+=s.aqi; ma=Math.max(ma,s.aqi);
+  });
+  K.aqiAvg=sa/sensors.length; K.aqiMax=ma;
+  // chiếu sáng
+  const on=lampsOnAt(h); let lo=0,lf=0;
+  lamps.forEach(p=>{
+    if(!p.fault&&rnd()<1.6e-5){p.fault=true;log('warn',`Đèn ${p.code} trên ${links[p.link].name} báo lỗi mất nguồn`,{t:'lamp',id:p.id});ticket(`Thay thế bộ đèn ${p.code} – ${links[p.link].name}`,'Đội chiếu sáng công cộng','lamp',{t:'lamp',id:p.id})}
+    if(p.fault)lf++;else if(on)lo++;
+  });
+  K.lampsOn=lo;K.lampsFault=lf;S.energy+=lo*.15/60;
+  K.floodMax=Math.max(...floods.map(f=>f.depth));
+}
+function pushH(a,v){a.push(v);if(a.length>120)a.shift()}
+function advanceMinute(){
+  S.min++;S.tot++;
+  if(S.min>=1440){S.min=0;S.day++;speedYest=speedDay.slice();speedDay.fill(null);S.energy=0}
+  minuteStep();
+}
+
+/* ---------------- Canvas & vẽ ---------------- */
+const cv=$('#map'),ctx=cv.getContext('2d'),wrap=$('#mapwrap');
+let T={},cw=0,ch=0,dpr=1,view={s:1,ox:0,oy:0},fitS=1;
+const TOK=['map-bg','road','road-edge','lu-res','lu-com','lu-pub','lu-green','lu-water','bld','bld-com','bld-pub','tree','map-label','halo','veh','lamp','lamp-off','flood','night','rain','accent','crit','warn','ok','los-a','los-b','los-c','los-d','los-e','los-f','aqi-1','aqi-2','aqi-3','aqi-4','aqi-5','aqi-6','ink','muted','line','panel','panel-2','age-1','age-2','age-3','age-4','age-5'];
+function readTokens(){const cs=getComputedStyle(document.documentElement);TOK.forEach(k=>T[k]=cs.getPropertyValue('--'+k).trim()||'#888');T.font=cs.getPropertyValue('--f-body');T.mono=cs.getPropertyValue('--f-mono')}
+readTokens();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{readTokens();uiDirty=true});
+new MutationObserver(()=>{readTokens();uiDirty=true}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+const losColor=vc=>T['los-'+losOf(vc).toLowerCase()];
+const aqiColor=a=>T['aqi-'+(aqiCat(a)+1)];
+
+function resize(){const r=wrap.getBoundingClientRect();dpr=window.devicePixelRatio||1;cw=r.width;ch=r.height;cv.width=Math.round(cw*dpr);cv.height=Math.round(ch*dpr);const ns=Math.min(cw/W,ch/H)*.97;if(Math.abs(view.s-fitS)<1e-6||!fitS||view.s===1)fit(ns);fitS=ns}
+function fit(s){s=s||Math.min(cw/W,ch/H)*.97;view.s=s;view.ox=(cw-W*s)/2;view.oy=(ch-H*s)/2}
+new ResizeObserver(()=>{resize()}).observe(wrap);
+
+function nightFactor(h){if(h>=19||h<5)return 1;if(h>=17.5)return (h-17.5)/1.5;if(h<6.5)return 1-(h-5)/1.5;return 0}
+
+function draw(){
+  const h=S.min/60+S.acc/3600, nf=nightFactor(h);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle=T['map-bg'];ctx.fillRect(0,0,cw,ch);
+  ctx.setTransform(dpr*view.s,0,0,dpr*view.s,dpr*view.ox,dpr*view.oy);
+  // khối đất
+  blocks.forEach(b=>{
+    ctx.fillStyle=T[b.use==='water'?'lu-green':'lu-'+b.use];
+    rr(b.x0,b.y0,b.x1-b.x0,b.y1-b.y0,6);ctx.fill();
+    if(b.use==='water'){ctx.fillStyle=T['lu-water'];rr(b.x0+22,b.y0+20,b.x1-b.x0-44,b.y1-b.y0-40,40);ctx.fill()}
+    if(S.layers.bld){const base=T[b.use==='com'?'bld-com':b.use==='pub'?'bld-pub':'bld'],act=bfActive();
+      b.bld.forEach(o=>{const m=!act||bMatch(o);ctx.globalAlpha=m?1:.14;ctx.fillStyle=S.ageColor?T['age-'+(ageBand(o.age)+1)]:base;ctx.fillRect(o.x,o.y,o.w,o.h);
+        if(act&&m){ctx.strokeStyle=T.ink;ctx.lineWidth=1;ctx.strokeRect(o.x+.5,o.y+.5,o.w-1,o.h-1)}});
+      ctx.globalAlpha=1;
+    }
+    ctx.fillStyle=T.tree;b.trees.forEach(t=>{ctx.beginPath();ctx.arc(t.x,t.y,t.r,0,7);ctx.fill()});
+  });
+  if(nf>0){ctx.globalAlpha=nf*.42;ctx.fillStyle=T.night;ctx.fillRect(-50,-50,W+100,H+100);ctx.globalAlpha=1}
+  // đường
+  ctx.lineCap='round';
+  links.forEach(l=>{const A=nodes[l.a],B=nodes[l.b];ctx.strokeStyle=T['road-edge'];ctx.lineWidth=l.w+4;line(A,B)});
+  links.forEach(l=>{const A=nodes[l.a],B=nodes[l.b];
+    ctx.strokeStyle=(S.layers.traffic&&!(l.closed||l.floodClosed))?losColor(l.vc):T.road;ctx.lineWidth=l.w;line(A,B)});
+  links.forEach(l=>{if(l.cls!=='art'||!(S.layers.traffic))return;const A=nodes[l.a],B=nodes[l.b];ctx.strokeStyle=T['road-edge'];ctx.globalAlpha=.35;ctx.lineWidth=1;ctx.setLineDash([8,8]);line(A,B);ctx.setLineDash([]);ctx.globalAlpha=1});
+  // đoạn đóng
+  links.forEach(l=>{if(!(l.closed||l.floodClosed))return;const A=nodes[l.a],B=nodes[l.b];
+    ctx.strokeStyle=l.closed?T.crit:T.flood;ctx.lineWidth=3;ctx.setLineDash([6,6]);line(A,B);ctx.setLineDash([]);
+    const mx=(A.x+B.x)/2,my=(A.y+B.y)/2;ctx.fillStyle=T.panel;ctx.beginPath();ctx.arc(mx,my,10,0,7);ctx.fill();ctx.strokeStyle=l.closed?T.crit:T.flood;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(mx-5,my-5);ctx.lineTo(mx+5,my+5);ctx.moveTo(mx+5,my-5);ctx.lineTo(mx-5,my+5);ctx.stroke()});
+  // ngập
+  if(S.layers.flood)floods.forEach(f=>{if(f.depth<.5)return;const r=16+f.depth*1.9;const g=ctx.createRadialGradient(f.x,f.y,2,f.x,f.y,r);
+    g.addColorStop(0,hexA(T.flood,.75));g.addColorStop(1,hexA(T.flood,0));ctx.fillStyle=g;ctx.beginPath();ctx.arc(f.x,f.y,r,0,7);ctx.fill()});
+  // phương tiện
+  if(S.layers.veh){ctx.fillStyle=T.veh;links.forEach(l=>{const A=nodes[l.a],B=nodes[l.b];const ux=(B.x-A.x)/l.lenU,uy=(B.y-A.y)/l.lenU,lane=l.w/4;
+    l.veh.forEach(v=>{const x=A.x+(B.x-A.x)*v.t-uy*lane*v.d,y=A.y+(B.y-A.y)*v.t+ux*lane*v.d;ctx.fillRect(x-2.2,y-2.2,4.4,4.4)})})}
+  // tín hiệu
+  if(S.layers.signal)nodes.forEach(n=>{if(!n.signal)return;const ph=phaseOf(n);
+    ctx.fillStyle=T.panel;ctx.strokeStyle=T['road-edge'];ctx.lineWidth=1;rr(n.x-7,n.y-7,14,14,3);ctx.fill();ctx.stroke();
+    ctx.fillStyle=ph.ew;ctx.fillRect(n.x-5,n.y-1.5,10,3);ctx.fillStyle=ph.ns;ctx.fillRect(n.x-1.5,n.y-5,3,10)});
+  // đèn đường
+  if(S.layers.light){const on=lampsOnAt(h);lamps.forEach(p=>{
+    if(p.fault){ctx.strokeStyle=T.crit;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(p.x,p.y,4,0,7);ctx.stroke();return}
+    if(on){ctx.fillStyle=hexA(T.lamp,.22*Math.max(.35,nf));ctx.beginPath();ctx.arc(p.x,p.y,12,0,7);ctx.fill()}
+    ctx.fillStyle=on?T.lamp:T['lamp-off'];ctx.beginPath();ctx.arc(p.x,p.y,2.4,0,7);ctx.fill()})}
+  // nhãn đường
+  ctx.font=`500 11px ${T.font}`;ctx.textBaseline='middle';ctx.lineJoin='round';
+  ROWN.forEach((n,r)=>{const x=(XS[0]+XS[1])/2,y=YS[r]-CLS[links[r*5].cls].w/2-9;halo(n,x,y,'center')});
+  COLN.forEach((n,c)=>{ctx.save();ctx.translate(XS[c]-CLS[links[25+c*4].cls].w/2-9,(YS[0]+YS[1])/2+10);ctx.rotate(-Math.PI/2);halo(n,0,0,'center');ctx.restore()});
+  if(view.s>.55){ctx.font=`600 10.5px ${T.font}`;blocks.forEach(b=>{if(b.use==='res')return;halo(b.name,(b.x0+b.x1)/2,b.use==='water'?(b.y0+b.y1)/2:b.y1-12,'center')})}
+  // ngập: nhãn
+  if(S.layers.flood)floods.forEach(f=>{const lv=floodLevel(f.depth);ctx.fillStyle=T.panel;ctx.strokeStyle=lv>=2?T.flood:T['road-edge'];ctx.lineWidth=lv>=2?2:1;
+    ctx.beginPath();ctx.moveTo(f.x+10,f.y-24);ctx.lineTo(f.x+16,f.y-30);ctx.lineTo(f.x+16,f.y-18);ctx.closePath();
+    rr(f.x+14,f.y-36,lv>=1?54:36,18,4);ctx.fill();ctx.stroke();
+    ctx.fillStyle=lv>=2?T.flood:T['map-label'];ctx.font=`600 10px ${T.mono}`;ctx.textAlign='left';ctx.fillText(lv>=1?f.code.slice(3)+'·'+fmt(f.depth)+'cm':f.code.slice(3),f.x+19,f.y-27)});
+  // không khí
+  if(S.layers.air)sensors.forEach(s=>{const c=aqiColor(s.aqi);ctx.fillStyle=hexA(c,.18);ctx.beginPath();ctx.arc(s.x,s.y,22,0,7);ctx.fill();
+    ctx.fillStyle=c;ctx.beginPath();ctx.arc(s.x,s.y,13,0,7);ctx.fill();ctx.strokeStyle=T.panel;ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=aqiCat(s.aqi)===1?'#2a2400':'#ffffff';ctx.font=`700 10px ${T.mono}`;ctx.textAlign='center';ctx.fillText(Math.round(s.aqi),s.x,s.y+.5)});
+  // mưa
+  if(S.rain>0){ctx.strokeStyle=hexA(T.rain,.45);ctx.lineWidth=1;ctx.beginPath();const n=Math.min(500,S.rain*4),o=(performance.now()/4)%60;
+    for(let i=0;i<n;i++){const x=((i*977)%1300)-40+o*.4,y=((i*613+o*9)%(H+60))-30;ctx.moveTo(x,y);ctx.lineTo(x-4,y+12)}ctx.stroke()}
+  // chọn
+  if(S.sel){const o=getObj(S.sel);ctx.strokeStyle=T.accent;ctx.lineWidth=3/view.s;
+    if(o.kind==='link'){const A=nodes[o.a],B=nodes[o.b];ctx.globalAlpha=.9;ctx.lineWidth=o.w+10;ctx.strokeStyle=hexA(T.accent,.35);line(A,B);ctx.globalAlpha=1}
+    else if(o.kind==='block'){rr(o.x0-3,o.y0-3,o.x1-o.x0+6,o.y1-o.y0+6,8);ctx.stroke()}
+    else if(o.kind==='bld'){ctx.lineWidth=Math.max(2.5,3/view.s);ctx.strokeRect(o.x-3,o.y-3,o.w+6,o.h+6)}
+    else{ctx.beginPath();ctx.arc(o.x,o.y,o.kind==='lamp'?8:o.kind==='node'?14:20,0,7);ctx.stroke()}}
+}
+function halo(t,x,y,al){ctx.textAlign=al;ctx.strokeStyle=T.halo;ctx.lineWidth=3;ctx.strokeText(t,x,y);ctx.fillStyle=T['map-label'];ctx.fillText(t,x,y)}
+function line(A,B){ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke()}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):ctx.rect(x,y,w,h)}
+function hexA(c,a){if(c[0]!=='#')return c;let h=c.slice(1);if(h.length===3)h=h.split('').map(x=>x+x).join('');const n=parseInt(h,16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`}
+function phaseOf(n){const t=(S.simSec+n.offset)%90;const G=T['los-a'],Y=T['los-c'],R=T['los-f'];
+  if(t<42)return{ew:G,ns:R,txt:'Xanh Đông – Tây',rem:42-t};if(t<45)return{ew:Y,ns:R,txt:'Vàng Đông – Tây',rem:45-t};if(t<87)return{ew:R,ns:G,txt:'Xanh Bắc – Nam',rem:87-t};return{ew:R,ns:Y,txt:'Vàng Bắc – Nam',rem:90-t}}
+const getObj=r=>({link:links,sensor:sensors,flood:floods,lamp:lamps,block:blocks,node:nodes,bld:bldAll})[r.t][r.id];
+
+/* ---------------- Tương tác bản đồ ---------------- */
+const toWorld=(sx,sy)=>[(sx-view.ox)/view.s,(sy-view.oy)/view.s];
+function segDist(px,py,a,b){const dx=b.x-a.x,dy=b.y-a.y;const t=Math.max(0,Math.min(1,((px-a.x)*dx+(py-a.y)*dy)/(dx*dx+dy*dy)));return Math.hypot(px-a.x-t*dx,py-a.y-t*dy)}
+function hit(wx,wy,linksOnly){
+  const th=px=>px/view.s, d=(o)=>Math.hypot(o.x-wx,o.y-wy);
+  if(!linksOnly){
+    if(S.layers.air)for(const s of sensors)if(d(s)<Math.max(15,th(12)))return{t:'sensor',id:s.id};
+    if(S.layers.flood)for(const f of floods)if(d(f)<Math.max(14,th(12))||(wx>f.x+12&&wx<f.x+70&&wy>f.y-38&&wy<f.y-16))return{t:'flood',id:f.id};
+    if(S.layers.signal)for(const n of nodes)if(n.signal&&d(n)<Math.max(9,th(8)))return{t:'node',id:n.id};
+    if(S.layers.light&&view.s>.6)for(const p of lamps)if(d(p)<th(6))return{t:'lamp',id:p.id};
+  }
+  let best=null,bd=1e9;links.forEach(l=>{const dd=segDist(wx,wy,nodes[l.a],nodes[l.b]);if(dd<bd){bd=dd;best=l}});
+  if(best&&bd<best.w/2+th(6))return{t:'link',id:best.id};
+  if(!linksOnly&&S.layers.bld)for(const o of bldAll)if(wx>=o.x&&wx<=o.x+o.w&&wy>=o.y&&wy<=o.y+o.h)return{t:'bld',id:o.id};
+  if(!linksOnly)for(const b of blocks)if(wx>b.x0&&wx<b.x1&&wy>b.y0&&wy<b.y1)return{t:'block',id:b.id};
+  return null;
+}
+let drag=null;
+cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,ox:view.ox,oy:view.oy,moved:false};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top;
+  if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4){drag.moved=true;cv.classList.add('dragging')}if(drag.moved){view.ox=drag.ox+dx;view.oy=drag.oy+dy}$('#tip').hidden=true;return}
+  const [wx,wy]=toWorld(sx,sy);const o=hit(wx,wy,S.mode==='close');showTip(o,sx,sy)});
+cv.addEventListener('pointerleave',()=>{$('#tip').hidden=true});
+cv.addEventListener('pointerup',e=>{const r=cv.getBoundingClientRect();cv.classList.remove('dragging');
+  if(drag&&!drag.moved){const [wx,wy]=toWorld(e.clientX-r.left,e.clientY-r.top);const o=hit(wx,wy,S.mode==='close');
+    if(S.mode==='close'){if(o&&o.t==='link')toggleClose(links[o.id])}else if(o)select(o);else{S.sel=null;renderObj(true)}}
+  drag=null});
+cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,e.deltaY<0?1.15:1/1.15)},{passive:false});
+function zoomAt(sx,sy,k){const ns=Math.max(fitS*.6,Math.min(fitS*4,view.s*k));const [wx,wy]=toWorld(sx,sy);view.s=ns;view.ox=sx-wx*ns;view.oy=sy-wy*ns}
+$('#zIn').onclick=()=>zoomAt(cw/2,ch/2,1.3);$('#zOut').onclick=()=>zoomAt(cw/2,ch/2,1/1.3);$('#zFit').onclick=()=>fit(fitS);
+
+function showTip(o,sx,sy){const tip=$('#tip');if(!o){tip.hidden=true;cv.style.cursor='';return}cv.style.cursor='pointer';const x=getObj(o);let a,b;
+  if(o.t==='link'){a=`${x.name}`;b=x.closed?'Đang đóng tuyến':x.floodClosed?'Cấm xe do ngập':`${x.seg} · ${fmt(x.flow)} xcqđ/h · V/C ${fmt(x.vc,2)} · ${fmt(x.speed)} km/h`;if(S.mode==='close')b+=' · bấm để '+(x.closed?'mở':'đóng')}
+  else if(o.t==='sensor'){a=x.name;b=`PM2.5 ${fmt(x.pm,1)} µg/m³ · VN_AQI ${fmt(x.aqi)} (${AQ_CAT[aqiCat(x.aqi)]})`}
+  else if(o.t==='flood'){a=`${x.code} · ${x.name}`;b=`Độ sâu ${fmt(x.depth,1)} cm · ${FLV[floodLevel(x.depth)]}`}
+  else if(o.t==='lamp'){a=`Đèn ${x.code}`;b=x.fault?'Hỏng – chờ thay thế':lampsOnAt(S.min/60)?'Đang sáng · 150 W LED':'Tắt theo lịch'}
+  else if(o.t==='node'){const p=phaseOf(x);a=`Nút ${short(ROWN[x.r])} × ${short(COLN[x.c])}`;b=`${p.txt} · còn ${Math.ceil(p.rem)} s`}
+  else if(o.t==='bld'){a=`${x.code} · ${blocks[x.block].name}`;b=`Xây năm ${x.year} · ${x.age} tuổi · ${x.floors} tầng`}
+  else {a=x.name;b=LUL[x.use]}
+  tip.innerHTML=`<b></b><span></span>`;tip.firstChild.textContent=a;tip.lastChild.textContent=b;tip.hidden=false;
+  const tw=tip.offsetWidth;tip.style.left=Math.min(sx+14,cw-tw-8)+'px';tip.style.top=(sy+16)+'px'}
+
+function toggleClose(l){l.closed=!l.closed;
+  if(l.closed){log('warn',`Đóng tuyến ${l.name} (${l.seg}) – phân luồng sang tuyến song song`,{t:'link',id:l.id});ticket(`Bố trí lực lượng phân luồng: ${l.name} (${l.seg})`,'Đội điều hành giao thông','closure',{t:'link',id:l.id})}
+  else log('ok',`Mở lại tuyến ${l.name} (${l.seg})`,{t:'link',id:l.id});
+  minuteStep();uiDirty=true;renderClosed();if(S.sel&&S.sel.t==='link'&&S.sel.id===l.id)renderObj(true)}
+
+/* ---------------- Giao diện ---------------- */
+const LAYERS=[['traffic','Giao thông'],['veh','Phương tiện'],['flood','Ngập úng'],['air','Không khí'],['light','Chiếu sáng'],['signal','Tín hiệu'],['bld','Công trình']];
+$('#layers').innerHTML=LAYERS.map(([k,n])=>`<button class="chip" data-layer="${k}" aria-pressed="true"><i></i>${n}</button>`).join('');
+$('#layers').onclick=e=>{const b=e.target.closest('[data-layer]');if(!b)return;const k=b.dataset.layer;S.layers[k]=!S.layers[k];b.setAttribute('aria-pressed',S.layers[k]);renderLegend()};
+function renderLegend(){let h='';
+  if(S.layers.traffic)h+=`<div class="row"><span class="t">Mức phục vụ</span>${['A','B','C','D','E','F'].map(x=>`<span class="sw"><b style="background:var(--los-${x.toLowerCase()})"></b>${x}</span>`).join('')}</div>`;
+  if(S.layers.bld&&S.ageColor)h+=`<div class="row"><span class="t">Tuổi CT</span>${AGE_B.map((x,i)=>`<span class="sw"><b style="background:var(--age-${i+1})"></b>${x[2].replace(' năm','')}</span>`).join('')}</div>`;
+  if(S.layers.air)h+=`<div class="row"><span class="t">VN_AQI</span>${AQ_CAT.slice(0,5).map((x,i)=>`<span class="sw"><b style="background:var(--aqi-${i+1})"></b>${x}</span>`).join('')}</div>`;
+  const L=$('#legend');L.innerHTML=h;L.hidden=!h}
+renderLegend();
+
+$('#btnPlay').onclick=()=>{S.playing=!S.playing;const b=$('#btnPlay');b.querySelector('span').textContent=S.playing?'Tạm dừng':'Tiếp tục';b.setAttribute('aria-label',S.playing?'Tạm dừng mô phỏng':'Tiếp tục mô phỏng');
+  b.querySelector('svg').innerHTML=S.playing?'<rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/>':'<path d="M4 2.5v11l9-5.5z"/>'};
+$('#speedSeg').onclick=e=>{const b=e.target.closest('[data-sp]');if(!b)return;S.speed=+b.dataset.sp;$('#speedSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b))};
+$('#jump').innerHTML='<option value="">—</option>'+Array.from({length:24},(_,i)=>`<option value="${i}">${pad(i)}:00</option>`).join('');
+$('#jump').onchange=e=>{const v=e.target.value;if(v==='')return;const target=+v*60;let n=(target-S.min+1440)%1440;if(n===0)n=1440;for(let i=0;i<n;i++)advanceMinute();S.acc=0;e.target.value='';uiDirty=true};
+$('#modeSeg').onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;S.mode=b.dataset.mode;$('#modeSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#banner').hidden=S.mode!=='close'};
+
+document.querySelector('.tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)showTab(b.dataset.tab)};
+function showTab(t){document.querySelectorAll('.tabs [data-tab]').forEach(x=>x.setAttribute('aria-selected',x.dataset.tab===t));['overview','scenario','bld','object','tickets'].forEach(k=>$('#tab-'+k).hidden=k!==t);uiDirty=true;if(t==='overview')drawDay();if(t==='bld')renderBld()}
+function select(o){S.sel=o;renderObj(true);showTab('object')}
+
+// kịch bản
+const rainIn=$('#rain'),demIn=$('#demand');
+function setRain(v){const was=S.rain;S.rain=+v;rainIn.value=v;$('#rainOut').textContent=v+' mm/h';
+  if(was===0&&S.rain>0)log('warn',`Bắt đầu mưa, cường độ ${S.rain} mm/h`,null);else if(was>0&&S.rain===0)log('ok','Tạnh mưa',null);else if(S.rain>=60&&was<60)log('crit',`Mưa lớn ${S.rain} mm/h – kích hoạt phương án chống ngập`,null)}
+rainIn.oninput=e=>setRain(e.target.value);
+function setDem(v){S.demand=v/100;demIn.value=v;$('#demOut').textContent=v+'%'}
+demIn.oninput=e=>setDem(+e.target.value);
+document.querySelectorAll('.presets').forEach(p=>p.onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;p.dataset.preset==='rain'?setRain(+b.dataset.v):setDem(+b.dataset.v);uiDirty=true});
+$('#fpList').innerHTML=floods.map(f=>`<div class="fp"><b>${f.code} · ${f.name}</b><span class="m" data-fpd="${f.id}">0 cm</span>
+  <div class="opts"><span>Thoát ${f.drain} mm/h</span><label><input type="checkbox" data-fp="pump" data-id="${f.id}" id="fp-pump-${f.id}">Bơm cưỡng bức</label><label><input type="checkbox" data-fp="clog" data-id="${f.id}" id="fp-clog-${f.id}">Cống bị tắc</label></div></div>`).join('');
+$('#fpList').onchange=e=>{const c=e.target.closest('[data-fp]');if(!c)return;const f=floods[+c.dataset.id];f[c.dataset.fp]=c.checked;
+  log(c.dataset.fp==='pump'?(c.checked?'ok':'warn'):(c.checked?'warn':'ok'),`${f.code}: ${c.dataset.fp==='pump'?(c.checked?'vận hành trạm bơm cơ động':'dừng bơm cơ động'):(c.checked?'ghi nhận cống tắc, giảm 50% khả năng thoát':'đã nạo vét cống')}`,{t:'flood',id:f.id});uiDirty=true};
+function renderClosed(){const cl=links.filter(l=>l.closed);$('#closedList').innerHTML=cl.length?cl.map(l=>`<div class="fp"><b>${l.name}</b><button class="btn" data-reopen="${l.id}">Mở lại</button><div class="opts">${l.seg}</div></div>`).join(''):'<div class="empty">Chưa có đoạn đường nào bị đóng.</div>'}
+$('#closedList').onclick=e=>{const b=e.target.closest('[data-reopen]');if(b)toggleClose(links[+b.dataset.reopen])};
+renderClosed();
+$('#btnReset').onclick=()=>{setRain(0);setDem(100);floods.forEach(f=>{f.pump=false;f.clog=false});links.forEach(l=>l.closed=false);renderClosed();log('ok','Khôi phục kịch bản mặc định',null);minuteStep();uiDirty=true};
+
+// KPI
+function kpiHTML(){
+  const sp=K.avgSpeed, spS=sp>=30?'ok':sp>=22?'warn':'crit';
+  const cg=K.cong, cgS=cg===0?'ok':cg<=6?'warn':'crit';
+  const aq=K.aqiAvg, aqS=aq<=100?'ok':aq<=150?'warn':'crit';
+  const fd=K.floodMax, fdS=fd<5?'ok':fd<15?'warn':'crit';
+  const open=tickets.filter(t=>t.status<2).length;
+  const on=lampsOnAt(S.min/60);
+  return [
+   ['Tốc độ hành trình TB',fmt(sp,1),'km/h',spS,`Tự do tham chiếu ≈ 45 km/h`],
+   ['Đoạn ùn tắc (LOS E–F)',cg,`/ ${links.length}`,cgS,`${links.filter(l=>l.closed||l.floodClosed).length} đoạn đang cấm xe`],
+   ['VN_AQI trung bình',fmt(aq),'',aqS,`Cao nhất ${fmt(K.aqiMax)} · ${AQ_CAT[aqiCat(K.aqiMax)]}`],
+   ['Ngập sâu nhất',fmt(fd,1),'cm',fdS,S.rain>0?`Đang mưa ${S.rain} mm/h`:'Không mưa'],
+   ['Đèn đường',on?fmt(K.lampsOn):'Tắt',on?`/ ${lamps.length}`:'',K.lampsFault?'warn':'ok',`${K.lampsFault} đèn hỏng · ${fmt(S.energy,1)} kWh hôm nay`],
+   ['Phiếu việc đang mở',open,'',open===0?'ok':open<=4?'warn':'crit',`${tickets.filter(t=>t.status===2).length} phiếu đã hoàn thành`]
+  ].map(([l,v,u,s,n])=>`<div class="kpi" data-s="${s}"><span class="l">${l}</span><span class="v">${v}<small>${u}</small></span><span class="n">${n}</span></div>`).join('')}
+
+// biểu đồ ngày
+function prepCanvas(c){const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;if(!r.width)return null;c.width=Math.round(r.width*d);c.height=Math.round(r.height*d);const g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);return{g,w:r.width,h:r.height}}
+function drawDay(){const p=prepCanvas($('#dayChart'));if(!p)return;const{g,w,h}=p;const L=30,R=8,Tp=8,B=20,max=60;
+  const X=m=>L+(w-L-R)*m/1440,Y=v=>Tp+(h-Tp-B)*(1-v/max);
+  g.font=`10px ${T.mono}`;g.fillStyle=T.muted;g.strokeStyle=T.line;g.lineWidth=1;
+  [0,20,40,60].forEach(v=>{g.beginPath();g.moveTo(L,Y(v));g.lineTo(w-R,Y(v));g.stroke();g.textAlign='right';g.textBaseline='middle';g.fillText(v,L-5,Y(v))});
+  [0,6,12,18,24].forEach(hh=>{g.textAlign=hh===0?'left':hh===24?'right':'center';g.textBaseline='alphabetic';g.fillText(pad(hh)+'h',X(hh*60),h-5)});
+  if(speedYest){g.strokeStyle=T.muted;g.globalAlpha=.4;g.setLineDash([3,3]);path(g,speedYest,X,Y);g.stroke();g.setLineDash([]);g.globalAlpha=1}
+  path(g,speedDay,X,Y);g.strokeStyle=T.accent;g.lineWidth=2;g.stroke();
+  // area
+  let first=-1,last=-1;speedDay.forEach((v,i)=>{if(v!=null){if(first<0)first=i;last=i}});
+  if(first>=0){path(g,speedDay,X,Y);g.lineTo(X(last),Y(0));g.lineTo(X(first),Y(0));g.closePath();g.fillStyle=hexA(T.accent,.12);g.fill();
+    g.fillStyle=T.accent;g.beginPath();g.arc(X(last),Y(speedDay[last]),3.5,0,7);g.fill();
+    g.fillStyle=T.ink;g.font=`600 11px ${T.mono}`;g.textAlign=X(last)>w-60?'right':'left';g.textBaseline='bottom';g.fillText(fmt(speedDay[last],1),X(last)+(X(last)>w-60?-6:6),Y(speedDay[last])-4)}}
+function path(g,arr,X,Y){g.beginPath();let pen=false;arr.forEach((v,i)=>{if(v==null){pen=false;return}pen?g.lineTo(X(i),Y(v)):g.moveTo(X(i),Y(v));pen=true})}
+
+function spark(c,data,o){const p=prepCanvas(c);if(!p)return;const{g,w,h}=p;const L=8,R=8,Tp=10,B=10;const max=o.max||Math.max(1,...data)*1.15;
+  const X=i=>L+(w-L-R)*i/119,Y=v=>Tp+(h-Tp-B)*(1-Math.min(v,max)/max);
+  if(o.th!=null){g.strokeStyle=T.crit;g.globalAlpha=.6;g.setLineDash([4,4]);g.beginPath();g.moveTo(L,Y(o.th));g.lineTo(w-R,Y(o.th));g.stroke();g.setLineDash([]);g.globalAlpha=1;
+    g.fillStyle=T.crit;g.font=`10px ${T.mono}`;g.textAlign='right';g.textBaseline='bottom';g.fillText(o.thl,w-R,Y(o.th)-2)}
+  if(!data.length)return;const off=120-data.length;
+  g.beginPath();data.forEach((v,i)=>i?g.lineTo(X(i+off),Y(v)):g.moveTo(X(i+off),Y(v)));g.strokeStyle=T.accent;g.lineWidth=1.8;g.stroke();
+  g.lineTo(X(119),Y(0));g.lineTo(X(off),Y(0));g.closePath();g.fillStyle=hexA(T.accent,.12);g.fill();
+  const lv=data[data.length-1];g.fillStyle=T.accent;g.beginPath();g.arc(X(119),Y(lv),3,0,7);g.fill();
+  g.fillStyle=T.muted;g.font=`10px ${T.mono}`;g.textAlign='left';g.textBaseline='top';g.fillText('−2 giờ',L,2);g.textAlign='right';g.fillText('hiện tại',w-R,2)}
+
+// đối tượng
+function objSpec(r){const o=getObj(r);const h=S.min/60;
+  if(r.t==='link'){const st=o.closed?['crit','Đóng tuyến']:o.floodClosed?['crit','Cấm xe do ngập']:o.vc>=1?['crit','Ùn tắc']:o.vc>=.9?['warn','Đông, chậm']:['ok','Thông thoáng'];
+    return{type:'Đoạn đường',title:o.name,sub:'Đoạn '+o.seg,st,rows:[['Cấp đường',CLS[o.cls].label],['Chiều dài',fmt(o.len*1000)+' m'],['Năng lực thiết kế',fmt(o.cap)+' xcqđ/h'],['Năng lực hiện hành',fmt(o.capEff)+' xcqđ/h'],['Lưu lượng',fmt(o.flow)+' xcqđ/h'],['Hệ số V/C',fmt(o.vc,2)],['Mức phục vụ',o.closed||o.floodClosed?'—':losOf(o.vc)],['Tốc độ hành trình',o.speed?fmt(o.speed,1)+' km/h':'—'],['Thời gian qua đoạn',o.speed?fmt(o.len/o.speed*3600)+' s':'—'],['Ngập tại hai đầu nút',fmt(o.floodDepth,1)+' cm']],
+      spark:{data:o.hist,max:1.6,th:1,thl:'V/C = 1'},sparkL:'Hệ số V/C, 2 giờ gần nhất',act:[['close',o.closed?'Mở lại tuyến':'Đóng tuyến, phân luồng']]}}
+  if(r.t==='sensor'){const c=aqiCat(o.aqi);return{type:'Trạm quan trắc không khí',title:o.name,sub:'Mã trạm '+o.code+' · cảm biến PM2.5 quang học',st:[c<=1?'ok':c===2?'warn':'crit',AQ_CAT[c]],
+      rows:[['PM2.5 (TB 1 giờ)',fmt(o.pm,1)+' µg/m³'],['VN_AQI',fmt(o.aqi)],['Mức chất lượng',AQ_CAT[c]],['QCVN 05:2023 (24 giờ)','50 µg/m³'],['Ảnh hưởng mưa',S.rain>0?'Rửa trôi bụi':'—']],
+      note:AQ_ADV[c],spark:{data:o.hist,th:50,thl:'50 µg/m³'},sparkL:'PM2.5 (µg/m³), 2 giờ gần nhất',act:[]}}
+  if(r.t==='flood'){const lv=floodLevel(o.depth);const eff=o.drain*(o.clog?.5:1)+(o.pump?80:0);
+    return{type:'Điểm ngập trọng điểm',title:o.code+' · '+o.name,sub:'Cảm biến siêu âm đo mực nước mặt đường',st:[['ok','idle','warn','crit'][lv],FLV[lv]],
+      rows:[['Độ sâu ngập',fmt(o.depth,1)+' cm'],['Cường độ mưa',S.rain+' mm/h'],['Hệ số tập trung dòng chảy',fmt(o.gain,1)],['Khả năng thoát thiết kế',o.drain+' mm/h'],['Khả năng thoát hiện hành',fmt(eff)+' mm/h'],['Bơm cưỡng bức',o.pump?'Đang chạy (+80 mm/h)':'Không'],['Tình trạng cống',o.clog?'Tắc, giảm 50%':'Bình thường'],['Đoạn đường bị ảnh hưởng',links.filter(l=>l.a===o.node||l.b===o.node).length+' đoạn']],
+      spark:{data:o.hist,max:Math.max(40,...o.hist,1)*1.1,th:30,thl:'30 cm cấm xe'},sparkL:'Độ sâu ngập (cm), 2 giờ gần nhất',act:[['pump',o.pump?'Dừng bơm':'Vận hành bơm cưỡng bức'],['clog',o.clog?'Đã nạo vét cống':'Báo cống tắc']]}}
+  if(r.t==='lamp'){const on=lampsOnAt(h);return{type:'Đèn chiếu sáng công cộng',title:'Đèn '+o.code,sub:links[o.link].name+' · '+links[o.link].seg,st:o.fault?['crit','Hỏng']:on?['ok','Đang sáng']:['idle','Tắt theo lịch'],
+      rows:[['Loại đèn','LED 150 W'],['Lịch vận hành','18:00 – 05:45'],['Điều khiển','Tủ điện thông minh, NB-IoT'],['Trạng thái nguồn',o.fault?'Mất nguồn':'Bình thường']],act:[['lamp',o.fault?'Xác nhận đã thay thế':'Báo hỏng thử nghiệm']]}}
+  if(r.t==='node'){const p=phaseOf(o);const inflow=links.filter(l=>l.a===o.id||l.b===o.id).reduce((s,l)=>s+l.flow,0)/2;
+    return{type:'Nút giao có đèn tín hiệu',title:'Nút '+short(ROWN[o.r])+' × '+short(COLN[o.c]),sub:'Điều khiển chu kỳ cố định, 2 pha',st:['ok',p.txt],
+      rows:[['Pha hiện tại',p.txt],['Thời gian còn lại',Math.ceil(p.rem)+' s'],['Chu kỳ','90 s'],['Xanh Đông – Tây','42 s'],['Xanh Bắc – Nam','42 s'],['Vàng + đỏ toàn phần','3 s × 2'],['Lưu lượng vào nút (ước tính)',fmt(inflow)+' xcqđ/h']],act:[]}}
+  if(r.t==='bld'){const adv=ageAdvice(o.age),bk=blocks[o.block];
+    return{type:'Công trình',title:o.code+' · '+bk.name,sub:LUL[o.use]+' · ô phố '+'ABCD'[bk.r]+(bk.c+1),st:[adv[0],AGE_B[ageBand(o.age)][2]],
+      rows:[['Năm hoàn thành',o.year],['Tuổi công trình',o.age+' năm'],['Số tầng',o.floors],['Kết cấu chính',o.struct],['Diện tích xây dựng',fmt(o.areaM2)+' m²'],['Tổng diện tích sàn',fmt(o.areaM2*o.floors)+' m²'],['Khuyến nghị',adv[1]]],act:[]}}
+  return{type:'Ô phố',title:o.name,sub:LUL[o.use],st:['idle',LUL[o.use]],rows:[['Diện tích',fmt(o.area,2)+' ha'],['Số công trình',o.bld.length||'—'],['Tuổi công trình trung bình',o.bld.length?fmt(o.bld.reduce((s,x)=>s+x.age,0)/o.bld.length,1)+' năm':'—'],['Tầng cao trung bình',o.floors?o.floors+' tầng':'—'],['Dân số ước tính',o.pop?fmt(o.pop)+' người':'—'],['Mật độ dân số',o.pop?fmt(o.pop/o.area)+' người/ha':'—']],act:[]}}
+function renderObj(full){const box=$('#objBox');
+  if(!S.sel){box.innerHTML='<div class="empty">Bấm vào đoạn đường, trạm quan trắc, điểm ngập, nút đèn tín hiệu, đèn đường hoặc ô phố trên bản đồ để xem thông tin và thao tác.</div>';return}
+  const s=objSpec(S.sel);
+  if(full||box.dataset.k!==S.sel.t+S.sel.id){box.dataset.k=S.sel.t+S.sel.id;
+    box.innerHTML=`<div class="sec"><span class="tag">${s.type}</span><h3 id="oT"></h3><p class="hint" id="oS"></p><div><span class="st" id="oSt"></span></div></div>
+    <dl class="dl" id="oRows">${s.rows.map((r,i)=>`<dt>${r[0]}</dt><dd data-i="${i}"></dd>`).join('')}</dl>
+    ${s.note!=null?'<p class="hint" id="oNote"></p>':''}
+    ${s.spark?`<div class="sec"><h2 id="oSL"></h2><canvas class="spark" id="oSpark"></canvas></div>`:''}
+    ${s.act.length?`<div class="actions">${s.act.map(a=>`<button class="btn" data-act="${a[0]}"></button>`).join('')}</div>`:''}`;
+    box.querySelector('#oT').textContent=s.title;box.querySelector('#oS').textContent=s.sub}
+  const st=box.querySelector('#oSt');st.className='st '+s.st[0];st.textContent=s.st[1];
+  s.rows.forEach((r,i)=>{const dd=box.querySelector(`dd[data-i="${i}"]`);if(dd)dd.textContent=r[1]});
+  const n=box.querySelector('#oNote');if(n)n.textContent=s.note;
+  if(s.spark){box.querySelector('#oSL').textContent=s.sparkL;spark(box.querySelector('#oSpark'),s.spark.data,s.spark)}
+  s.act.forEach(a=>{const b=box.querySelector(`[data-act="${a[0]}"]`);if(b)b.textContent=a[1]})}
+$('#objBox').onclick=e=>{const b=e.target.closest('[data-act]');if(!b||!S.sel)return;const o=getObj(S.sel),a=b.dataset.act;
+  if(a==='close')toggleClose(o);
+  if(a==='pump'||a==='clog'){o[a]=!o[a];const cb=$(`#fp-${a}-${o.id}`);if(cb)cb.checked=o[a];log(a==='pump'?(o[a]?'ok':'warn'):(o[a]?'warn':'ok'),`${o.code}: ${a==='pump'?(o[a]?'vận hành trạm bơm cơ động':'dừng bơm cơ động'):(o[a]?'ghi nhận cống tắc':'đã nạo vét cống')}`,{t:'flood',id:o.id})}
+  if(a==='lamp'){if(o.fault){o.fault=false;tickets.forEach(t=>{if(t.kind==='lamp'&&t.ref.id===o.id&&t.status<2)t.status=2});tkVer++;log('ok',`Đèn ${o.code} đã được thay thế`,{t:'lamp',id:o.id})}else{o.fault=true;log('warn',`Đèn ${o.code} báo lỗi mất nguồn`,{t:'lamp',id:o.id});ticket(`Thay thế bộ đèn ${o.code} – ${links[o.link].name}`,'Đội chiếu sáng công cộng','lamp',{t:'lamp',id:o.id})}}
+  uiDirty=true;renderObj(false)};
+
+// sàng lọc công trình theo tuổi
+const AGE_PRE=[['Tất cả',0,AGE_MAX],['Dưới 10 năm',0,9],['10–30 năm',10,30],['30–50 năm',30,50],['Từ 50 năm',50,AGE_MAX],['Cần kiểm định ≥ 40 năm',40,AGE_MAX]];
+const aMin=$('#ageMin'),aMax=$('#ageMax');aMin.max=aMax.max=AGE_MAX;aMax.value=AGE_MAX;
+$('#agePre').innerHTML=AGE_PRE.map((p,i)=>`<button data-ap="${i}">${p[0]}</button>`).join('');
+function setAge(mn,mx){BF.min=mn;BF.max=mx;aMin.value=mn;aMax.value=mx;renderBld()}
+$('#agePre').onclick=e=>{const b=e.target.closest('[data-ap]');if(!b)return;const p=AGE_PRE[+b.dataset.ap];setAge(p[1],p[2])};
+aMin.oninput=()=>{let v=+aMin.value;if(v>BF.max){BF.max=v;aMax.value=v}BF.min=v;renderBld()};
+aMax.oninput=()=>{let v=+aMax.value;if(v<BF.min){BF.min=v;aMin.value=v}BF.max=v;renderBld()};
+$('#bUse').onchange=e=>{BF.use=e.target.value;renderBld()};
+$('#ageColor').onchange=e=>{S.ageColor=e.target.checked;renderLegend()};
+let bListAll=false;
+function renderBld(){
+  $('#ageMinOut').textContent=BF.min+' năm';$('#ageMaxOut').textContent=BF.max+' năm';
+  $('#agePre').querySelectorAll('button').forEach(b=>{const p=AGE_PRE[+b.dataset.ap];b.setAttribute('aria-pressed',p[1]===BF.min&&p[2]===BF.max)});
+  const m=bldAll.filter(bMatch).sort((a,b)=>b.age-a.age);
+  const n=m.length,avg=n?m.reduce((s,o)=>s+o.age,0)/n:0,floor=m.reduce((s,o)=>s+o.areaM2*o.floors,0),insp=m.filter(o=>o.age>=40).length;
+  $('#bStats').innerHTML=[
+    ['Công trình phù hợp',fmt(n),`/ ${fmt(bldAll.length)}`,n?'ok':'warn',`${fmt(n/bldAll.length*100,1)}% tổng số công trình`],
+    ['Tuổi trung bình',n?fmt(avg,1):'—','năm','',n?`Cũ nhất: ${m[0].year} (${m[0].age} năm)`:'Không có công trình'],
+    ['Tổng diện tích sàn',fmt(floor/1000,1),'nghìn m²','',`Diện tích xây dựng ${fmt(m.reduce((s,o)=>s+o.areaM2,0)/1000,1)} nghìn m²`],
+    ['Cần kiểm định (≥ 40 năm)',fmt(insp),'công trình',insp?'crit':'ok',`${m.filter(o=>o.age>=50).length} công trình từ 50 năm trở lên`]
+  ].map(([l,v,u,s,t])=>`<div class="kpi" data-s="${s}"><span class="l">${l}</span><span class="v">${v}<small>${u}</small></span><span class="n">${t}</span></div>`).join('');
+  drawHist();
+  const lim=bListAll?m.length:40;
+  $('#bList').innerHTML=n?m.slice(0,lim).map(o=>`<button data-b="${o.id}"><span class="c">${o.code}</span><span class="n"></span><span class="y">${o.year}</span><span class="ageb"><i style="background:var(--age-${ageBand(o.age)+1})"></i>${o.age} năm</span></button>`).join('')+(n>lim?`<button data-more="1" class="more" style="display:block">Xem thêm ${n-lim} công trình</button>`:'')
+    :'<div class="empty">Không có công trình nào thỏa điều kiện lọc.</div>';
+  $('#bList').querySelectorAll('[data-b]').forEach(el=>{const o=bldAll[+el.dataset.b];el.querySelector('.n').textContent=`${blocks[o.block].name} · ${o.floors} tầng`});
+  renderLegend();
+}
+$('#bList').onclick=e=>{if(e.target.closest('[data-more]')){bListAll=true;renderBld();return}const b=e.target.closest('[data-b]');if(!b)return;const o=bldAll[+b.dataset.b];
+  view.ox=cw/2-(o.x+o.w/2)*view.s;view.oy=ch/2-(o.y+o.h/2)*view.s;select({t:'bld',id:o.id})};
+function drawHist(){const p=prepCanvas($('#ageHist'));if(!p)return;const{g,w,h}=p;const L=28,R=6,Tp=12,B=20;const nb=AGE_MAX/5;
+  const cnt=new Array(nb).fill(0),cIn=new Array(nb).fill(0);bldAll.forEach(o=>{const i=Math.min(nb-1,Math.floor(o.age/5));cnt[i]++;if(bMatch(o))cIn[i]++});
+  const mx=Math.max(...cnt);const top=Math.ceil(mx/10)*10||10;const bw=(w-L-R)/nb,Y=v=>Tp+(h-Tp-B)*(1-v/top);
+  g.font=`10px ${T.mono}`;g.strokeStyle=T.line;g.fillStyle=T.muted;g.lineWidth=1;
+  [0,top/2,top].forEach(v=>{g.beginPath();g.moveTo(L,Y(v));g.lineTo(w-R,Y(v));g.stroke();g.textAlign='right';g.textBaseline='middle';g.fillText(v,L-5,Y(v))});
+  for(let i=0;i<nb;i++){const x=L+i*bw+1.5,c=T['age-'+(ageBand(i*5)+1)];
+    g.globalAlpha=.25;g.fillStyle=c;g.fillRect(x,Y(cnt[i]),bw-3,Y(0)-Y(cnt[i]));
+    g.globalAlpha=1;g.fillRect(x,Y(cIn[i]),bw-3,Y(0)-Y(cIn[i]));}
+  g.fillStyle=T.muted;g.textBaseline='alphabetic';for(let i=0;i<=nb;i+=2){g.textAlign=i===0?'left':i===nb?'right':'center';g.fillText(i*5,L+i*bw,h-6)}
+  g.textAlign='right';g.fillText('tuổi (năm)',w-R,Tp-2)}
+
+// nhật ký
+function dayLbl(d){return d===S.day?'':' (hq)'}
+let evShown=-1;
+function renderLog(){if(evShown===evVer)return;evShown=evVer;
+  $('#log').innerHTML=events.slice(0,60).map((e,i)=>`<li data-ev="${i}"><time>${hhmm(e.t)}</time><span class="dot ${e.sev}"></span><span></span></li>`).join('')||'<li style="cursor:default"><time></time><span></span><span class="hint">Chưa có sự kiện.</span></li>';
+  $('#log').querySelectorAll('li[data-ev]').forEach(li=>li.lastChild.textContent=events[+li.dataset.ev].text)}
+$('#log').onclick=e=>{const li=e.target.closest('[data-ev]');if(!li)return;const ev=events[+li.dataset.ev];if(ev&&ev.ref)select(ev.ref)};
+
+// phiếu việc
+const TST=[['crit','Mới'],['warn','Đang xử lý'],['ok','Hoàn thành']];
+let tkShown=-1;
+function renderTickets(){$('#tkBadge').textContent=tickets.filter(t=>t.status===0).length;$('#tkBadge').dataset.n=tickets.filter(t=>t.status===0).length;
+  if(tkShown===tkVer+tkFilter)return;tkShown=tkVer+tkFilter;
+  const list=tickets.filter(t=>tkFilter==='all'||(tkFilter==='open'?t.status<2:t.status===2));
+  $('#tkList').innerHTML=list.length?list.slice(0,60).map(t=>`<div class="tk ${t.status===2?'done':''}" data-tk="${t.id}">
+    <div class="h"><span class="id">${t.id} · ${hhmm(t.t)}${t.day!==S.day?' hôm trước':''}</span><span class="st ${TST[t.status][0]}">${TST[t.status][1]}</span></div>
+    <div class="t"></div>
+    <div class="meta"><span>${t.unit}</span>${t.status<2?`<button class="btn" data-adv="${t.id}">${t.status===0?'Giao xử lý':'Hoàn thành'}</button>`:''}</div></div>`).join('')
+   :`<div class="empty">${tkFilter==='done'?'Chưa có phiếu nào hoàn thành.':'Không có phiếu việc đang mở.'}</div>`;
+  $('#tkList').querySelectorAll('[data-tk]').forEach(el=>{const t=tickets.find(x=>x.id===el.dataset.tk);el.querySelector('.t').textContent=t.title})}
+$('#tkList').onclick=e=>{const b=e.target.closest('[data-adv]');if(!b){const c=e.target.closest('[data-tk]');if(c){const t=tickets.find(x=>x.id===c.dataset.tk);if(t&&t.ref)select(t.ref)}return}
+  const t=tickets.find(x=>x.id===b.dataset.adv);t.status++;
+  if(t.status===2){if(t.kind==='lamp'){lamps[t.ref.id].fault=false;log('ok',`Hoàn thành ${t.id}: đèn ${lamps[t.ref.id].code} đã thay thế`,t.ref)}
+    else if(t.kind==='flood'){const f=floods[t.ref.id];f.pump=true;const cb=$('#fp-pump-'+f.id);if(cb)cb.checked=true;log('ok',`Hoàn thành ${t.id}: đã bố trí bơm cưỡng bức tại ${f.code}`,t.ref)}
+    else log('ok',`Hoàn thành ${t.id}: ${t.title}`,t.ref)}
+  else log('info',`${t.id} đã giao cho ${t.unit}`,t.ref);
+  tkVer++;uiDirty=true};
+$('#tkFilter').onclick=e=>{const b=e.target.closest('[data-f]');if(!b)return;tkFilter=b.dataset.f;$('#tkFilter').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));renderTickets()};
+
+const DOW=['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+function modeOf(h){if(h>=6.5&&h<9)return['Cao điểm sáng',1];if(h>=16.5&&h<19)return['Cao điểm chiều',1];if(h>=22||h<5)return['Ban đêm',0];return['Thấp điểm',0]}
+function renderUI(){
+  const d=new Date(BASE_DATE);d.setDate(d.getDate()+S.day);
+  $('#clkDate').textContent=`${DOW[d.getDay()]}, ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+  $('#clk').textContent=hhmm(S.min);const m=modeOf(S.min/60);const cm=$('#clkMode');cm.textContent=m[0];cm.classList.toggle('hot',!!m[1]);
+  if(!$('#tab-overview').hidden){$('#kpis').innerHTML=kpiHTML();drawDay();renderLog()}
+  if(!$('#tab-object').hidden)renderObj(false);
+  renderTickets();
+  floods.forEach(f=>{const el=document.querySelector(`[data-fpd="${f.id}"]`);if(el)el.textContent=fmt(f.depth,1)+' cm';const p=$('#fp-pump-'+f.id),c=$('#fp-clog-'+f.id);if(p)p.checked=f.pump;if(c)c.checked=f.clog});
+}
+
+/* ---------------- Vòng lặp ---------------- */
+let last=performance.now(),uiDirty=true,lastUI=0;
+function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
+  if(S.playing){S.simSec+=dt*S.speed;S.acc+=dt*S.speed;while(S.acc>=60){S.acc-=60;advanceMinute();uiDirty=true}
+    const vf=Math.min(3,1+Math.log10(S.speed));
+    links.forEach(l=>{const step=l.speed*1.4*dt*vf/l.lenU;l.veh.forEach(v=>{v.t+=v.d*step;if(v.t>1)v.t-=1;if(v.t<0)v.t+=1})})}
+  draw();
+  if(uiDirty&&now-lastUI>250){uiDirty=false;lastUI=now;renderUI()}
+  requestAnimationFrame(frame)}
+
+// khởi tạo: chạy trước từ 00:00 tới 07:30 để có lịch sử trong ngày
+for(let i=0;i<7*60+30;i++){advanceMinute()}
+S.day=0;
+// sự cố mẫu để minh họa quy trình
+lamps[37].fault=true;log('warn',`Đèn ${lamps[37].code} trên ${links[lamps[37].link].name} báo lỗi mất nguồn`,{t:'lamp',id:37});ticket(`Thay thế bộ đèn ${lamps[37].code} – ${links[lamps[37].link].name}`,'Đội chiếu sáng công cộng','lamp',{t:'lamp',id:37});
+resize();renderObj(true);requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
